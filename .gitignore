@@ -1,0 +1,8 @@
+node_modules
+public
+dist
+.DS_Store
+data/
+tmp/
+media/
+npm-debug.log

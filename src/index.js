@@ -6,15 +6,26 @@
 //
 
 import colors from 'colors';
-import Digester from './data/Digester';
+import Authenticator from './Authenticator';
+import Digester from './Digester';
 import env from './utils/env';
+import cmd from './utils/cmd';
 
 // -----------------------------------------------------------------------------
 
-// If not prod, work interactively
-if (env.isProd === false) {
-    console.info('donaldtrump.js is working interactively'.cyan);
-}
+const a = new Authenticator();
 
-// First, try to connect the Digester to the DB
-const d = new Digester();
+new Digester(a)
+    .connectToDB()
+    .then(d => {
+        // If running interactively, start the interactive helper
+        if (env.isProd === false) {
+            cmd(d);
+        } else {
+            // Otherwise, we're working non-interactively and we need to get our Trump on
+            d.beginPolling();
+        }
+    })
+    .catch(err => {
+        console.error(err.message.red);
+    });

@@ -9,10 +9,9 @@ const env = {
     isProd: process.env.NODE_ENV === 'production',
     twitter: {
         consumerKey: process.env.CONSUMER_KEY,
-        consumerSecret: process.env.CONSUMER_SECRET,
-        callback: process.env.CALLBACK
+        consumerSecret: process.env.CONSUMER_SECRET
     },
-    mLabUri: process.env.MONGODB_URI
+    mongoUri: process.env.MONGODB_URI
 };
 
 export default env;

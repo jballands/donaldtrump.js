@@ -30,6 +30,7 @@ export default class Digester {
                 dbUri = 'mongodb://localhost/donaldtrump-js';
             }
 
+            Mongoose.Promise = global.Promise;
             Mongoose.connect(dbUri);
 
             Mongoose.connection.on('open', () => {

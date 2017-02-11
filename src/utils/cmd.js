@@ -10,18 +10,26 @@ import util from 'util';
 
 // -----------------------------------------------------------------------------
 
+let BUSY = false;
+
 export default function(digester) {
     console.info('INFO: donaldtrump.js is working interactively'.cyan);
 
     makePrompt();
 
     process.stdin.on('data', i => {
+        // If busy with something else, don't print anything here
+        if (BUSY) {
+            return;
+        }
+
         process.stdin.pause();
 
-        switch (i) {
-            case 'fetch\n':
+        BUSY = true;
+        switch (i.trim()) {
+            case 'fetch':
                 digester.fetchTweets(makePrompt); break;
-            case 'quit\n':
+            case 'quit':
                 quit(makePrompt); break;
             default:
                 help(makePrompt);
@@ -44,6 +52,7 @@ function quit() {
 }
 
 function makePrompt() {
+    BUSY = false;
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
     process.stdout.write('trump$ ');

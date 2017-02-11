@@ -7,7 +7,9 @@
 
 import process from 'process';
 import request from 'request';
+import qs from 'query-string';
 import colors from 'colors';
+import _assign from 'lodash.assign';
 import User from './models/User';
 import env from './utils/env';
 
@@ -109,12 +111,12 @@ export default class Authenticator {
                     if (err) {
                         return reject(err);
                     }
-                    return resolve(JSON.parse(body));
+                    return resolve(qs.parse(body));
                 });
             });
 
-            const requestPIN = body => new Promise((resolve, reject) => {
-                const uri = `https://api.twitter.com/oauth/authenticate?${body.oauth_token}`;
+            const requestPIN = tokens => new Promise((resolve, reject) => {
+                const uri = `https://api.twitter.com/oauth/authenticate?oauth_token=${tokens.oauth_token}`;
 
                 console.info(`INFO: Open a browser and enter this URL: ${uri}`.cyan);
                 console.info(`INFO: Once authorized, please enter the pin.`.cyan);
@@ -124,29 +126,38 @@ export default class Authenticator {
                 process.stdout.write('PIN? ');
                 process.stdin.on('data', pin => {
                     process.stdin.pause();
-                    return resolve(pin);
+                    return resolve({
+                        pin: pin.trim(),
+                        token: tokens.oauth_token,
+                        secret: tokens.oauth_token_secret
+                    });
                 });
             });
 
-            const getAccessToken = pin => new Promise((resolve, reject) => {
+            const getAccessToken = tokens => new Promise((resolve, reject) => {
                 const args = {
-                    url: `https://api.twitter.com/oauth/access_token?oauth_verifier=${pin}`,
-                    oauth: oAuth
+                    url: `https://api.twitter.com/oauth/access_token`,
+                    oauth: _assign({}, oAuth, {
+                        token: tokens.token,
+                        token_secret: tokens.secret,
+                        verifier: tokens.pin
+                    })
                 };
 
                 request.post(args, (err, res, body) => {
                     if (err) {
                         return reject(err);
                     }
-                    return resolve(JSON.parse(body));
+                    return resolve(qs.parse(body));
                 });
             });
 
-            const writeUserToDB = body => new Promise((resolve, reject) => {
+            const writeUserToDB = tokens => new Promise((resolve, reject) => {
                 const u = new User({
-                    token: body.oauth_token,
-                    tokenSecret: body.oauth_token_secret,
-                    id: body.user_id
+                    token: tokens.oauth_token,
+                    tokenSecret: tokens.oauth_token_secret,
+                    id: tokens.user_id,
+                    userName: tokens.screen_name
                 });
 
                 u.save(err => {
@@ -159,10 +170,13 @@ export default class Authenticator {
 
             // Actually do the OAuth
             const u = beginOAuth()
-                .then(body => requestPIN(body))
-                .then(pin => getAccessToken(pin))
-                .then(body => writeUserToDB(body))
-                .then(user => resolve(user))
+                .then(tokens => requestPIN(tokens))
+                .then(tokens => getAccessToken(tokens))
+                .then(tokens => writeUserToDB(tokens))
+                .then(user => {
+                    console.info('Log in succeeded!'.green);
+                    return resolve(user);
+                })
                 .catch(err => reject(err));
         });
     }

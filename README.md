@@ -46,3 +46,10 @@ $ yarn dev
 Output should appear on your console. At this time, the app should run
 interactively. *Production execution has not yet been implemented and
 setting `NODE_ENV=production` will yield unexpected behavior.*
+
+## Monitoring the Database
+
+I personally use [MongoHub](https://github.com/jeromelebel/MongoHub-Mac)
+to monitor the Mongo database as donaldtrump.js operates. For testing
+purposes, simply choose the plus button in the lower left-hand corner
+and name it something sensible (like `fake-news.db`), then press "Add".

@@ -13,7 +13,7 @@ import util from 'util';
 let BUSY = false;
 
 export default function(digester) {
-    console.info('INFO: donaldtrump.js is working interactively'.cyan);
+    console.info('INFO: donaldtrump.js is working interactively.'.cyan);
 
     makePrompt();
 
@@ -38,11 +38,9 @@ export default function(digester) {
 }
 
 function help(done) {
-    console.info('You can say:'.cyan);
     console.info('fetch'.yellow + ' - Fetches new tweets from @realDonaldTrump.');
     console.info('help'.yellow + ' - Shows this help text.');
     console.info('quit'.yellow + ' - Quits donaldtrump.js.');
-
     done();
 }
 

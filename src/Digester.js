@@ -6,7 +6,9 @@
 //
 
 import Mongoose from 'mongoose';
+import request from 'request';
 import colors from 'colors';
+import Tweet from './models/Tweet';
 import env from './utils/env';
 import args from './utils/args';
 
@@ -56,8 +58,10 @@ export default class Digester {
     fetchTweets(done) {
         this.authenticator.getAuthenticatedAccount()
             .then(user => {
-                console.log(JSON.stringify(user));
-                console.log('SUCCEEDED!');
+                console.info(`INFO: Proceeding as @${user.userName}.`.cyan);
+                return this._fetchTweets(user);
+            })
+            .then(tweets => {
                 done();
             })
             .catch(err => {
@@ -65,6 +69,61 @@ export default class Digester {
                 console.error(err.message.red);
                 done();
             });
+    }
+
+    // PRIVATE -----------------------------------------------------------------
+
+    _fetchTweets(user) {
+        return new Promise((resolve, reject) => {
+            const args = {
+                url: 'https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&screen_name=realDonaldTrump',
+                oauth: {
+                    consumer_key: env.twitter.consumerKey,
+                    consumer_secret: env.twitter.consumerSecret,
+                    token: user.token,
+                    token_secret: user.tokenSecret
+                }
+            };
+
+            request.get(args, (err, res, body) => {
+                const tweets = JSON.parse(body);
+                const promises = [];
+
+                for (const tweet of tweets) {
+                    const t = new Tweet({
+                        value: tweet.text,
+                        date: new Date(tweet.created_at),
+                        id: tweet.id
+                    });
+
+                    promises.push(new Promise((resolve, reject) => {
+                        // If we already have the tweet, we don't save it again
+                        Tweet.find({ id: tweet.id }, (err, tweets) => {
+                            if (tweets.length > 0) {
+                                return resolve(0);
+                            }
+
+                            t.save(err => {
+                                if (err) {
+                                    return reject(err);
+                                }
+                                return resolve(1);
+                            });
+                        });
+                    }));
+                }
+
+                Promise.all(promises)
+                    .then(vals => {
+                        const total = vals.reduce((acc, curr) => acc + curr);
+                        console.info(`INFO: Added ${total} tweets to db.`.cyan);
+                        resolve();
+                    })
+                    .catch(err => {
+                        reject(err);
+                    });
+            });
+        });
     }
 
 }

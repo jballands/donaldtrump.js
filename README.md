@@ -43,4 +43,6 @@ $ yarn
 $ yarn dev
 ```
 
-Output should appear on your console.
+Output should appear on your console. At this time, the app should run
+interactively. *Production execution has not yet been implemented and
+setting `NODE_ENV=production` will yield unexpected behavior.*

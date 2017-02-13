@@ -65,8 +65,7 @@ export default class Digester {
                 done();
             })
             .catch(err => {
-                console.error(`ERROR: Failed to fetch an authenticated user.`);
-                console.error(err.message.red);
+                console.error(`ERROR: Failed to fetch an authenticated user.`.red, err.message.red);
                 done();
             });
     }
@@ -85,43 +84,66 @@ export default class Digester {
                 }
             };
 
+            if (!args.oauth.consumer_key || !args.oauth.consumer_secret) {
+                return reject(new Error(`No consumerKey and/or consumerSecret` +
+                    ` set on environment. Please set these variables.`));
+            }
+
             request.get(args, (err, res, body) => {
-                const tweets = JSON.parse(body);
+                const qwipTweets = JSON.parse(body);
                 const promises = [];
 
-                for (const tweet of tweets) {
-                    const t = new Tweet({
-                        value: tweet.text,
-                        date: new Date(tweet.created_at),
-                        id: tweet.id
-                    });
+                // This function gets all the tweets from the DB and cross-references
+                // them with the tweets it got back from Twitter, ditching the
+                // repeated tweets, only returning the unique ones that aren't in
+                // the database
+                const getUniqueTweets = () => new Promise((resolve, reject) => {
+                    Tweet.find((err, storedTweets) => {
+                        if (err) {
+                            return reject(err);
+                        }
 
-                    promises.push(new Promise((resolve, reject) => {
-                        // If we already have the tweet, we don't save it again
-                        Tweet.find({ id: tweet.id }, (err, tweets) => {
-                            if (tweets.length > 0) {
-                                return resolve(0);
+                        const tweets = [];
+                        const ids = storedTweets.map(t => t.id);
+                        for (const t of qwipTweets) {
+                            // If the tweet id from Twitter doesn't exist in the
+                            // found tweets, add it to the unique tweets
+                            if (ids.indexOf(t.id) < 0) {
+                                tweets.push(new Tweet({
+                                    value: t.text,
+                                    date: new Date(t.created_at),
+                                    id: t.id
+                                }));
                             }
+                        }
 
-                            t.save(err => {
-                                if (err) {
-                                    return reject(err);
-                                }
-                                return resolve(1);
-                            });
+                        resolve(tweets);
+                    });
+                });
+
+                // This function returns a Promise.all promise that saves all the
+                // tweets that make it up
+                const saveUniqueTweets = tweets => {
+                    const promises = tweets.map(tweet => new Promise((resolve, reject) => {
+                        tweet.save(err => {
+                            if (err) {
+                                return reject(err);
+                            }
+                            return resolve();
                         });
                     }));
-                }
 
-                Promise.all(promises)
-                    .then(vals => {
-                        const total = vals.reduce((acc, curr) => acc + curr);
-                        console.info(`INFO: Added ${total} tweets to db.`.cyan);
+                    return Promise.all(promises);
+                };
+
+                // Begin the promise chain
+                getUniqueTweets()
+                    .then(tweets => saveUniqueTweets(tweets))
+                    .then(tweets => {
+                        console.info(`INFO: Added ${tweets.length} tweets to database.`.cyan);
                         resolve();
                     })
-                    .catch(err => {
-                        reject(err);
-                    });
+                    .catch(err => reject(err));
             });
         });
     }

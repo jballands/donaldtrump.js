@@ -87,8 +87,8 @@ export default class Authenticator {
             const apiSecret = env.twitter.consumerSecret;
 
             if (!apiKey || !apiSecret) {
-                return reject(new Error(`ERROR: No consumerKey and/or consumerSecret
-                    set on environment. Please set these variables.`));
+                return reject(new Error(`No consumerKey and/or consumerSecret` +
+                    ` set on environment. Please set these variables.`));
             }
 
             const oAuth = {
@@ -97,10 +97,9 @@ export default class Authenticator {
                 consumer_secret: apiSecret
             };
 
-            // Because OAuth is a giant asshole, I've broken down each leg of
-            // Twitter's three-legged OAuth into function that return promises,
-            // then string those functions together.
-
+            // This function returns a promise that tells Twitter we're going
+            // to start the three-legged OAuth sequence, returning the tokens
+            // needed to generate a PIN
             const beginOAuth = () => new Promise((resolve, reject) => {
                 const args = {
                     url: 'https://api.twitter.com/oauth/request_token',
@@ -115,6 +114,9 @@ export default class Authenticator {
                 });
             });
 
+            // This function returns a promise that generates a authentication url
+            // and returns it to the user, then waits for a PIN. When the user
+            // enters the PIN, it returns that PIN
             const requestPIN = tokens => new Promise((resolve, reject) => {
                 const uri = `https://api.twitter.com/oauth/authenticate?oauth_token=${tokens.oauth_token}`;
 
@@ -134,6 +136,10 @@ export default class Authenticator {
                 });
             });
 
+            // This function returns a promise that asks Twitter for access tokens
+            // given tokens from the authentication URL and PIN, returning all
+            // tokens neccessary to authenticate successfully with Twitter in
+            // the future
             const getAccessToken = tokens => new Promise((resolve, reject) => {
                 const args = {
                     url: `https://api.twitter.com/oauth/access_token`,
@@ -152,6 +158,8 @@ export default class Authenticator {
                 });
             });
 
+            // This function returns a promise that saves all Twitter authentication
+            // tokens in the database for future reference
             const writeUserToDB = tokens => new Promise((resolve, reject) => {
                 const u = new User({
                     token: tokens.oauth_token,
@@ -168,7 +176,7 @@ export default class Authenticator {
                 });
             });
 
-            // Actually do the OAuth
+            // Begin the promise chain
             const u = beginOAuth()
                 .then(tokens => requestPIN(tokens))
                 .then(tokens => getAccessToken(tokens))

@@ -68,15 +68,15 @@ export default class Authenticator {
     _handleUnexpectedUsers(users) {
         return new Promise((resolve, reject) => {
             if (users.length === 0) {
-                console.warn(`WARN: No accounts in db, starting authentication
-                    with Twitter...`.yellow);
+                console.warn(`WARN: No accounts in database. Starting authentication`.yellow +
+                    ` with Twitter...`.yellow);
                 return this._authenticateWithTwitter()
                     .then(user => resolve(user))
                     .catch(error => reject(error));
             }
             else {
-                console.warn(`WARN: Too many accounts in db. You must delete some
-                    in order to continue.`.yellow);
+                console.warn(`WARN: Too many accounts in database. You must delete some`.yellow +
+                    ` in order to continue.`.yellow);
             }
         });
     }

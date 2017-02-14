@@ -10,7 +10,7 @@ import request from 'request';
 import colors from 'colors';
 import Tweet from './models/Tweet';
 import env from './utils/env';
-import args from './utils/args';
+import options from './utils/options';
 
 // -----------------------------------------------------------------------------
 
@@ -27,8 +27,8 @@ export default class Digester {
             // Use a local DB
             let dbUri = env.mongoUri;
             if (dbUri === undefined) {
-                console.warn(`WARN: No mongo uri set on environment, attempting
-                    to connect to a local mongo instance.`.yellow);
+                console.warn(`WARN: No mongo uri set on environment, attempting`.yellow +
+                    ` to connect to a local mongo instance.`.yellow);
                 dbUri = 'mongodb://localhost/donaldtrump-js';
             }
 
@@ -36,7 +36,7 @@ export default class Digester {
             Mongoose.connect(dbUri);
 
             Mongoose.connection.on('open', () => {
-                console.info('Connection to db succeeded!'.green);
+                console.info('Connection to database succeeded!'.green);
                 this.canDigest = true;
                 resolve(this);
             });
@@ -52,14 +52,18 @@ export default class Digester {
     beginPolling() {
         setInterval(() => {
             this.fetchTweets();
-        }, args.pollIntervalHr * 1000 * 60 * 60);
+        }, options.pollingIntervalHours * 1000 * 60 * 60);
     }
 
     fetchTweets(done) {
         this.authenticator.getAuthenticatedAccount()
             .then(user => {
-                console.info(`INFO: Proceeding as @${user.userName}.`.cyan);
-                return this._fetchTweets(user);
+                console.info(`INFO: Using @${user.userName} credentials to access Twitter.`.cyan);
+
+                const targetAccounts = options.accounts;
+                console.info(`WAIT: Fetching tweets from @${targetAccounts.join(', @')}...`.magenta);
+
+                return Promise.all(targetAccounts.map(acnt => this._fetchTweets(user, acnt)));
             })
             .then(tweets => {
                 done();
@@ -72,10 +76,10 @@ export default class Digester {
 
     // PRIVATE -----------------------------------------------------------------
 
-    _fetchTweets(user) {
+    _fetchTweets(user, targetAccount) {
         return new Promise((resolve, reject) => {
             const args = {
-                url: 'https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&screen_name=realDonaldTrump',
+                url: `https://api.twitter.com/1.1/statuses/user_timeline.json?count=200&screen_name=${targetAccount}`,
                 oauth: {
                     consumer_key: env.twitter.consumerKey,
                     consumer_secret: env.twitter.consumerSecret,
@@ -140,7 +144,7 @@ export default class Digester {
                 getUniqueTweets()
                     .then(tweets => saveUniqueTweets(tweets))
                     .then(tweets => {
-                        console.info(`INFO: Added ${tweets.length} tweets to database.`.cyan);
+                        console.info(`INFO: Added ${tweets.length} tweets from @${targetAccount} to database.`.cyan);
                         resolve();
                     })
                     .catch(err => reject(err));

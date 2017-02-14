@@ -56,8 +56,6 @@ export default class MarkovChain {
             // From the possibleNextChunks, choose a random chunk
             const possibleNextChunks = this.corpus[lastChunk];
 
-            // console.log(`${JSON.stringify(lastChunk)} -> ${JSON.stringify(possibleNextChunks)}`);
-
             lastChunk = possibleNextChunks[_random(0, possibleNextChunks.length -1)];
             tweetBuilder = tweetBuilder.concat(lastChunk);
         }

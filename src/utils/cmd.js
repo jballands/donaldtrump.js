@@ -12,7 +12,7 @@ import util from 'util';
 
 let BUSY = false;
 
-export default function(digester) {
+export default function(digester, tweeter) {
     console.info('INFO: donaldtrump.js is working interactively.'.cyan);
 
     makePrompt();
@@ -29,6 +29,8 @@ export default function(digester) {
         switch (i.trim()) {
             case 'fetch':
                 digester.fetchTweets(makePrompt); break;
+            case 'sample':
+                tweeter.generateTweet(makePrompt); break;
             case 'quit':
                 quit(makePrompt); break;
             default:
@@ -39,6 +41,7 @@ export default function(digester) {
 
 function help(done) {
     console.info('fetch'.yellow + ' - Fetches new tweets from @realDonaldTrump.');
+    console.info('sample'.yellow + ' - Generates a tweet sample without posting to Twitter.');
     console.info('help'.yellow + ' - Shows this help text.');
     console.info('quit'.yellow + ' - Quits donaldtrump.js.');
     done();

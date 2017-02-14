@@ -66,7 +66,7 @@ export default class Digester {
             })
             .catch(err => {
                 console.error(`ERROR: Failed to fetch an authenticated user.`.red, err.message.red);
-                done();
+                if (done) done();
             });
     }
 

@@ -47,7 +47,7 @@ Output should appear on your console. At this time, the app should run
 interactively. *Production execution has not yet been implemented and
 setting `NODE_ENV=production` will yield unexpected behavior.*
 
-# Options
+## Options
 
 There are various options that you can configure in `options.json` at the base
 of this repository:

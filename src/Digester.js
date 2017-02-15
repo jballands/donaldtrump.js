@@ -55,23 +55,24 @@ export default class Digester {
         }, options.pollingIntervalHours * 1000 * 60 * 60);
     }
 
-    fetchTweets(done) {
-        this.authenticator.getAuthenticatedAccount()
-            .then(user => {
-                console.info(`INFO: Using @${user.userName} credentials to access Twitter.`.cyan);
+    fetchTweets() {
+        return new Promise((resolve, reject) => {
+            this.authenticator.getAuthenticatedAccount()
+                .then(user => {
+                    console.info(`INFO: Using @${user.handle} credentials to access Twitter.`.cyan);
 
-                const targetAccounts = options.accounts;
-                console.info(`WAIT: Fetching tweets from @${targetAccounts.join(', @')}...`.magenta);
+                    const targetAccounts = options.accounts;
+                    console.info(`WAIT: Fetching tweets from @${targetAccounts.join(', @')}...`.magenta);
 
-                return Promise.all(targetAccounts.map(acnt => this._fetchTweets(user, acnt)));
-            })
-            .then(tweets => {
-                done();
-            })
-            .catch(err => {
-                console.error(`ERROR: Failed to fetch an authenticated user.`.red, err.message.red);
-                if (done) done();
-            });
+                    return Promise.all(targetAccounts.map(acnt => this._fetchTweets(user, acnt)));
+                })
+                .then(tweets => {
+                    resolve();
+                })
+                .catch(err => {
+                    reject(`ERROR: Failed to fetch tweets. ${err.message}`);
+                });
+        });
     }
 
     // PRIVATE -----------------------------------------------------------------
@@ -116,6 +117,7 @@ export default class Digester {
                                 tweets.push(new Tweet({
                                     value: t.text,
                                     date: new Date(t.created_at),
+                                    handle: t.user.screen_name,
                                     id: t.id
                                 }));
                             }

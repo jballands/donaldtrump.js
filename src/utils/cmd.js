@@ -28,9 +28,20 @@ export default function(digester, tweeter) {
         BUSY = true;
         switch (i.trim()) {
             case 'fetch':
-                digester.fetchTweets(makePrompt); break;
+                digester.fetchTweets()
+                    .then(() => makePrompt())
+                    .catch(err => console.error(err.red));;
+                break;
             case 'sample':
-                tweeter.generateTweet(makePrompt); break;
+                tweeter.getTweet()
+                    .then(tweet => {
+                        console.info(`> ${tweet}`.cyan);
+                        makePrompt();
+                    })
+                    .catch(err => console.error(err.red));
+                break;
+            case 'post':
+
             case 'quit':
                 quit(makePrompt); break;
             default:
@@ -42,6 +53,7 @@ export default function(digester, tweeter) {
 function help(done) {
     console.info('fetch'.yellow + ' - Fetches new tweets from @realDonaldTrump.');
     console.info('sample'.yellow + ' - Generates a tweet sample without posting to Twitter.');
+    console.info('post'.yellow + ' - Generates a tweet and posts it to Twitter.');
     console.info('help'.yellow + ' - Shows this help text.');
     console.info('quit'.yellow + ' - Quits donaldtrump.js.');
     done();

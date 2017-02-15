@@ -165,7 +165,7 @@ export default class Authenticator {
                     token: tokens.oauth_token,
                     tokenSecret: tokens.oauth_token_secret,
                     id: tokens.user_id,
-                    userName: tokens.screen_name
+                    handle: tokens.screen_name
                 });
 
                 u.save(err => {

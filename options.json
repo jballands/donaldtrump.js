@@ -1,5 +1,5 @@
 {
-    "accounts": ["realDonaldTrump", "codinghorror", "jballands"],
+    "accounts": ["realDonaldTrump", "jdan"],
     "pollingIntervalHours": 2,
-    "markovOrder": 1
+    "markovOrder": 2
 }

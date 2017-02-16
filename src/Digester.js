@@ -50,8 +50,13 @@ export default class Digester {
     }
 
     beginPolling() {
+        if (typeof options.pollingIntervalHours !== 'number') {
+            return console.error(`ERROR: No pollingIntervalHours in options.json. Please add it.`.red);
+        }
+
         setInterval(() => {
-            this.fetchTweets();
+            this.fetchTweets()
+                .catch(err => console.err(err));
         }, options.pollingIntervalHours * 1000 * 60 * 60);
     }
 

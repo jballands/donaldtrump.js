@@ -54,6 +54,8 @@ of this repository:
 
 `accounts`: An array of Twitter handles to target.
 
+`genesis`: A Twitter handle to act as the start for all tweets created by the bot.
+
 `pollingIntervalHours`: The number of hours that should pass before
 donaldtrump.js polls `accounts` for fresh Tweets.
 

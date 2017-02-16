@@ -20,6 +20,17 @@ export default class Tweeter {
         this.authenticator = authenticator;
     }
 
+    beginPolling() {
+        if (typeof options.pollingIntervalHours !== 'number') {
+            return console.error(`ERROR: No pollingIntervalHours in options.json. Please add it.`.red);
+        }
+
+        setInterval(() => {
+            this.postTweet()
+                .catch(err => console.err(err));
+        }, options.pollingIntervalHours * 1000 * 60 * 60);
+    }
+
     getTweet() {
         return new Promise((resolve, reject) => {
             console.info('WAIT: Generating tweet...'.magenta);
@@ -29,7 +40,6 @@ export default class Tweeter {
 
                 // If there's a genesis account, seed those as the genesis
                 const genesis = options.genesis;
-                console.log(genesis);
                 if (genesis) {
                     markov.seed(tweets.filter(t => t.handle === genesis).map(t => t.value), true);
                     markov.seed(tweets.filter(t => t.handle !== genesis).map(t => t.value), false);
@@ -45,7 +55,7 @@ export default class Tweeter {
         });
     }
 
-    postTweet(tweet) {
+    postTweet() {
         return new Promise((resolve, reject) => {
             let user = null;
 
@@ -56,7 +66,7 @@ export default class Tweeter {
                 })
                 .then(tweet => {
                     console.info('Tweet generation successful!'.green);
-                    console.info(`> ${tweet}`.cyan);
+                    console.info(`${tweet.length} > ${tweet}`.cyan);
                     console.info(`WAIT: Posting to @${user.handle}...`.magenta);
                     return this._postTweet(tweet, user);
                 })

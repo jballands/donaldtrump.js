@@ -1,8 +1,9 @@
 {
     "accounts": ["realDonaldTrump", "POTUS", "VP", "thekylecraig", "jballands",
-        "Squareses", "HectorLuisJr", "jaimemguajardo", "tfrank64", "normalnorman"],
+        "Squareses", "HectorLuisJr", "jaimemguajardo", "tfrank64", "normalnorman",
+        "j_l_avery"],
     "genesis": "realDonaldTrump",
-    "pollingIntervalHours": 2,
+    "pollingIntervalHours": 0.017,
     "markovOrder": 1,
     "scrubNewLines": true,
     "suppressReplies": true,

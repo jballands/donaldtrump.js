@@ -28,6 +28,7 @@ new Digester(a)
         } else {
             // Otherwise, we're working non-interactively and we need to get our Trump on
             d.beginPolling();
+            t.beginPolling();
         }
     })
     .catch(err => {

@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "A Markov chain bot that pulls from Trump's Twitter as well as other sources",
     "scripts": {
-        "start": "node_modules/.bin/gulp build && node dist/server.js",
+        "start": "node_modules/.bin/gulp build && node dist/index.js",
         "dev": "node_modules/.bin/gulp",
         "build": "node_modules/.bin/gulp build",
         "test": "echo \"Error: no test specified\" && exit 1"

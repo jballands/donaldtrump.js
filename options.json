@@ -3,7 +3,7 @@
         "Squareses", "HectorLuisJr", "jaimemguajardo", "tfrank64", "normalnorman",
         "j_l_avery"],
     "genesis": "realDonaldTrump",
-    "pollingIntervalHours": 0.017,
+    "pollingIntervalHours": 2,
     "markovOrder": 1,
     "scrubNewLines": true,
     "suppressReplies": true,

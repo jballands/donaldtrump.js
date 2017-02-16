@@ -31,5 +31,5 @@ new Digester(a)
         }
     })
     .catch(err => {
-        console.error(err.message.red);
+        return console.error(err.message.red);
     });

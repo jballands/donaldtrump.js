@@ -26,7 +26,8 @@ export default class Tweeter {
                 const markov = new MarkovChain(tweets.map(t => t.value), options.markovOrder);
 
                 // Actually return a tweet
-                resolve(markov.generateRandomly());
+                let tweet = markov.generateRandomly(140);
+                resolve(this.tweetHelper(tweet));
             });
         });
     }
@@ -47,6 +48,42 @@ export default class Tweeter {
                     if (done) done();
                 });
         });
+    }
+
+    tweetHelper(tweet) {
+        tweet = this.scrubNewLines(tweet, options.scrubNewLines);
+        tweet = this.suppressReplies(tweet, options.suppressReplies);
+        tweet = this.scrubMentions(tweet, options.scrubMentions);
+        tweet = this.scrubLinks(tweet, options.scrubLinks);
+        return tweet;
+    }
+
+    suppressReplies(tweet, mode) {
+        if (mode === false) {
+            return tweet;
+        }
+        return tweet.replace(/^@/g, '.@');
+    }
+
+    scrubNewLines(tweet, mode) {
+        if (mode === false) {
+            return tweet;
+        }
+        return tweet.replace(/\n/g, ' ');
+    }
+
+    scrubMentions(tweet, mode) {
+        if (mode === false) {
+            return tweet;
+        }
+        return tweet.replace(/(\s@|^.@|^@)/g, ' ');
+    }
+
+    scrubLinks(tweet, mode) {
+        if (mode === false) {
+            return tweet;
+        }
+        return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
     }
 
 }

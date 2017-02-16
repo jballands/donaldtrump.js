@@ -1,7 +1,7 @@
 {
     "name": "donaldtrump-js",
     "version": "1.0.0",
-    "description": "A bot that acts like Donald Trump and talks about the web",
+    "description": "A Markov chain bot that pulls from Trump's Twitter as well as other sources",
     "scripts": {
         "start": "node_modules/.bin/gulp build && node dist/server.js",
         "dev": "node_modules/.bin/gulp",

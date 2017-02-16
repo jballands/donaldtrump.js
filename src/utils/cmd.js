@@ -30,15 +30,21 @@ export default function(digester, tweeter) {
             case 'fetch':
                 digester.fetchTweets()
                     .then(() => makePrompt())
-                    .catch(err => console.error(err.red));;
+                    .catch(err => {
+                        console.error(err.red)
+                        makePrompt();
+                    });
                 break;
             case 'sample':
                 tweeter.getTweet()
                     .then(tweet => {
-                        console.info(`> ${tweet}`.cyan);
+                        console.info(`${tweet.length} > ${tweet}`.cyan);
                         makePrompt();
                     })
-                    .catch(err => console.error(err.red));
+                    .catch(err => {
+                        console.error(err.red);
+                        makePrompt();
+                    });
                 break;
             case 'post':
 

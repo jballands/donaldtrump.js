@@ -1,5 +1,9 @@
 {
-    "accounts": ["realDonaldTrump", "jdan"],
+    "accounts": ["realDonaldTrump", "thekylecraig", "jballands"],
     "pollingIntervalHours": 2,
-    "markovOrder": 2
+    "markovOrder": 1,
+    "scrubNewLines": true,
+    "suppressReplies": true,
+    "scrubMentions": false,
+    "scrubLinks": true
 }

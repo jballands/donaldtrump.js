@@ -5,10 +5,12 @@
 //  (C) 2017 Jonathan Ballands
 //
 
+import request from 'request';
 import colors from 'colors';
 import Tweet from './models/Tweet';
 import MarkovChain from './utils/MarkovChain';
 import options from './utils/options';
+import env from './utils/env';
 
 // -----------------------------------------------------------------------------
 
@@ -23,63 +25,109 @@ export default class Tweeter {
             console.info('WAIT: Generating tweet...'.magenta);
 
             Tweet.find({ handle: { $in: options.accounts }}, (err, tweets) => {
-                const markov = new MarkovChain(tweets.map(t => t.value), options.markovOrder);
+                const markov = new MarkovChain(options.markovOrder);
+
+                // If there's a genesis account, seed those as the genesis
+                const genesis = options.genesis;
+                console.log(genesis);
+                if (genesis) {
+                    markov.seed(tweets.filter(t => t.handle === genesis).map(t => t.value), true);
+                    markov.seed(tweets.filter(t => t.handle !== genesis).map(t => t.value), false);
+                }
+                else {
+                    markov.seed(tweets.map(t => t.value), true);
+                }
 
                 // Actually return a tweet
                 let tweet = markov.generateRandomly(140);
-                resolve(this.tweetHelper(tweet));
+                resolve(this._tweetHelper(tweet));
             });
         });
     }
 
     postTweet(tweet) {
         return new Promise((resolve, reject) => {
-            this.authenticator.getAuthenticatedAccount()
-                .then(user => {
-                    console.info(`INFO: Using @${user.handle} credentials to access Twitter.`.cyan);
+            let user = null;
 
-                    // TODO: Actually post the tweet
+            this.authenticator.getAuthenticatedAccount()
+                .then(_user => {
+                    user = _user;
+                    return this.getTweet();
                 })
-                .then(tweets => {
-                    done();
+                .then(tweet => {
+                    console.info('Tweet generation successful!'.green);
+                    console.info(`> ${tweet}`.cyan);
+                    console.info(`WAIT: Posting to @${user.handle}...`.magenta);
+                    return this._postTweet(tweet, user);
+                })
+                .then(() => {
+                    console.info('Post successful!'.green);
+                    resolve();
                 })
                 .catch(err => {
-                    console.error(`ERROR: Failed to fetch tweets.`.red, err.message.red);
-                    if (done) done();
+                    reject(`ERROR: Failed to post to Twitter. ${err.message}`);
                 });
         });
     }
 
-    tweetHelper(tweet) {
-        tweet = this.scrubNewLines(tweet, options.scrubNewLines);
-        tweet = this.suppressReplies(tweet, options.suppressReplies);
-        tweet = this.scrubMentions(tweet, options.scrubMentions);
-        tweet = this.scrubLinks(tweet, options.scrubLinks);
+    // PRIVATE -----------------------------------------------------------------
+
+    _postTweet(tweet, user) {
+        return new Promise((resolve, reject) => {
+            const args = {
+                url: `https://api.twitter.com/1.1/statuses/update.json`,
+                oauth: {
+                    consumer_key: env.twitter.consumerKey,
+                    consumer_secret: env.twitter.consumerSecret,
+                    token: user.token,
+                    token_secret: user.tokenSecret
+                },
+                form: {
+                    status: tweet
+                }
+            };
+
+            if (!args.oauth.consumer_key || !args.oauth.consumer_secret) {
+                return reject(new Error(`No consumerKey and/or consumerSecret` +
+                    ` set on environment. Please set these variables.`));
+            }
+
+            request.post(args, (err, res, body) => {
+                resolve();
+            });
+        });
+    }
+
+    _tweetHelper(tweet) {
+        tweet = this._scrubNewLines(tweet, options.scrubNewLines);
+        tweet = this._suppressReplies(tweet, options.suppressReplies);
+        tweet = this._scrubMentions(tweet, options.scrubMentions);
+        tweet = this._scrubLinks(tweet, options.scrubLinks);
         return tweet;
     }
 
-    suppressReplies(tweet, mode) {
+    _suppressReplies(tweet, mode) {
         if (mode === false) {
             return tweet;
         }
         return tweet.replace(/^@/g, '.@');
     }
 
-    scrubNewLines(tweet, mode) {
+    _scrubNewLines(tweet, mode) {
         if (mode === false) {
             return tweet;
         }
         return tweet.replace(/\n/g, ' ');
     }
 
-    scrubMentions(tweet, mode) {
+    _scrubMentions(tweet, mode) {
         if (mode === false) {
             return tweet;
         }
         return tweet.replace(/(\s@|^.@|^@)/g, ' ');
     }
 
-    scrubLinks(tweet, mode) {
+    _scrubLinks(tweet, mode) {
         if (mode === false) {
             return tweet;
         }

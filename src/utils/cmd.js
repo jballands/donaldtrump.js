@@ -47,7 +47,13 @@ export default function(digester, tweeter) {
                     });
                 break;
             case 'post':
-
+                tweeter.postTweet()
+                    .then(() => makePrompt())
+                    .catch(err => {
+                        console.error(err.red);
+                        makePrompt();
+                    });
+                break;
             case 'quit':
                 quit(makePrompt); break;
             default:

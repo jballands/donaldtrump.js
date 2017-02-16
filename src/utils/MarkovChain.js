@@ -5,7 +5,6 @@
 //  (C) 2017 Jonathan Ballands
 //
 
-import colors from 'colors';
 import _chunk from 'lodash.chunk';
 import _random from 'lodash.random';
 import options from './options';
@@ -18,18 +17,20 @@ export default class MarkovChain {
     starters = [];
     order = 2;
 
-    constructor(tweets, order) {
+    constructor(order) {
         this.order = order;
+    }
 
+    seed(tweets, allowAsGenesis) {
         for (const tweet of tweets) {
             const words = tweet.split(' ');
-            const chunks = _chunk(words, order);
+            const chunks = _chunk(words, this.order);
 
             for (let i = 0 ; i < chunks.length ; i++) {
                 const chunk = chunks[i];
 
                 // Is this the first chunk? If so, add it to starters
-                if (i === 0) {
+                if (i === 0 && allowAsGenesis === true) {
                     this.starters.push(chunk);
                 }
 
@@ -56,6 +57,10 @@ export default class MarkovChain {
     }
 
     generateGivenChunk(chunk, maxChar) {
+        if (!chunk || chunk === []) {
+            return null;
+        }
+
         let tweetBuilder = chunk;
         let lastChunk = chunk;
 

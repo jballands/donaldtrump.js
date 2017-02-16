@@ -1,6 +1,6 @@
 # donaldtrump.js
 
-The tremendous Markov chain bot that tweets about the web.
+The tremendous Markov chain bot that tweets like Trump and some friends of mine.
 
 ## Installation
 

@@ -6,8 +6,8 @@
     "tweetingIntervalHours": 5,
     "markovOrder": 2,
     "scrubbingStrategy": 2,
-    "newLines": true,
-    "replies": true,
-    "mentions": false,
+    "newLines": false,
+    "replies": false,
+    "mentions": true,
     "links": true
 }

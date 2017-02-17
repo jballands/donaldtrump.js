@@ -109,36 +109,36 @@ export default class Tweeter {
     }
 
     _tweetHelper(tweet) {
-        tweet = this._scrubNewLines(tweet, options.newLines);
-        tweet = this._suppressReplies(tweet, options.replies);
-        tweet = this._scrubMentions(tweet, options.mentions);
-        tweet = this._scrubLinks(tweet, options.links);
+        tweet = this._newLines(tweet, options.newLines);
+        tweet = this._replies(tweet, options.replies);
+        tweet = this._mentions(tweet, options.mentions);
+        tweet = this._links(tweet, options.links);
         return tweet;
     }
 
-    _suppressReplies(tweet, mode) {
-        if (mode === false) {
+    _replies(tweet, mode) {
+        if (mode === true) {
             return tweet;
         }
         return tweet.replace(/^@/g, '.@');
     }
 
-    _scrubNewLines(tweet, mode) {
-        if (mode === false) {
+    _newLines(tweet, mode) {
+        if (mode === true) {
             return tweet;
         }
         return tweet.replace(/\n/g, ' ');
     }
 
-    _scrubMentions(tweet, mode) {
-        if (mode === false) {
+    _mentions(tweet, mode) {
+        if (mode === true) {
             return tweet;
         }
         return tweet.replace(/(\s@|^.@|^@)/g, ' ');
     }
 
-    _scrubLinks(tweet, mode) {
-        if (mode === false) {
+    _links(tweet, mode) {
+        if (mode === true) {
             return tweet;
         }
         return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');

@@ -6,6 +6,7 @@
 //
 
 import _chunk from 'lodash.chunk';
+import _flatten from 'lodash.flatten';
 import _random from 'lodash.random';
 
 const TWEET_COMPLETION_THRESHOLD = 0.92;
@@ -24,8 +25,9 @@ export default class MarkovChain {
 
     seed(tweets, allowAsGenesis) {
         for (const tweet of tweets) {
-            const words = tweet.split(' ');
-            const chunks = _chunk(words, this.order);
+            const sentences = //TODO: Turn into sentence .map(s => s.split(' ').filter(w => w.length > 0));
+            const chunkedSentences = sentences.map(s => _chunk(s, this.order));
+            const chunks = _flatten(chunkedSentences);
 
             for (let i = 0 ; i < chunks.length ; i++) {
                 const chunk = chunks[i];
@@ -49,6 +51,9 @@ export default class MarkovChain {
                 }
             }
         }
+
+        console.log(this.corpus);
+
     }
 
     generateRandomly(maxChar) {

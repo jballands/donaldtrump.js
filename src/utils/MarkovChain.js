@@ -7,7 +7,8 @@
 
 import _chunk from 'lodash.chunk';
 import _random from 'lodash.random';
-import options from './options';
+
+const TWEET_COMPLETION_THRESHOLD = 0.92;
 
 // -----------------------------------------------------------------------------
 
@@ -64,6 +65,8 @@ export default class MarkovChain {
         let tweetBuilder = chunk;
         let lastChunk = chunk;
 
+        console.info(`${lastChunk.join(' ')} ${' -> '.red} ${'?'.yellow}`);
+
         // While the chunk doesn't terminate, keep adding to the tweet
         while (lastChunk != null) {
             // The current tweet builder length
@@ -85,22 +88,30 @@ export default class MarkovChain {
             const possibleNextChunkLengths = possibleNextChunks.map(chunk => this.stringArrayLength(chunk));
 
             // If we are getting close to the limit, try and close the tweet
-            if (tweetCompletion >= 0.8 && possibleNextChunks.indexOf(null) >= 0) {
+            if (tweetCompletion >= TWEET_COMPLETION_THRESHOLD && possibleNextChunks.indexOf(null) >= 0) {
+                console.info(`0.92 threshold reached`.red);
+                console.info(`${JSON.stringify(possibleNextChunks)} -> ${'null'.red}`);
                 lastChunk = null;
             }
             // But we're still getting close to an overflow... only pick short chunks
-            else if (tweetCompletion >= 0.8) {
+            else if (tweetCompletion >= TWEET_COMPLETION_THRESHOLD) {
                 const smallest = possibleNextChunkLengths.reduce((acc, curr) => acc < curr ? acc : curr);
-                lastChunk = possibleNextChunks[possibleNextChunks.indexOf(smallest)];
+                lastChunk = possibleNextChunks[possibleNextChunkLengths.indexOf(smallest)];
+                console.info(`0.92 threshold reached`.yellow);
+                console.info(`${JSON.stringify(possibleNextChunks)} -> ${lastChunk !== null ? lastChunk.join(' ').blue : 'null'.blue}`);
             }
             // If there's no terminator, just pick one at random
             else {
                 lastChunk = possibleNextChunks[_random(0, possibleNextChunks.length -1)];
+                console.info(`${JSON.stringify(possibleNextChunks)} -> ${lastChunk !== null ? lastChunk.join(' ').blue : 'null'.blue}`);
             }
-
             // Append to tweet
             tweetBuilder = tweetBuilder.concat(lastChunk);
+            console.info(`${tweetBuilder.join(' -> '.red)} ${'-> ?'.yellow}`);
+            console.info(`New seed: ${lastChunk !== null ? lastChunk.join(' ') : 'null'}`.magenta);
         }
+
+        console.info(`${tweetBuilder.join(' -> '.red)}`);
 
         return tweetBuilder.join(' ');
     }

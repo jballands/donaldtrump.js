@@ -1,12 +1,13 @@
 {
-    "accounts": ["realDonaldTrump", "POTUS", "VP", "thekylecraig", "jballands",
-        "Squareses", "HectorLuisJr", "jaimemguajardo", "tfrank64", "normalnorman",
-        "j_l_avery"],
-    "genesis": "realDonaldTrump",
+    "accounts": ["realDonaldTrump", "VP", "oreillyfactor", "RichardBSpencer", "POTUS44",
+        "BuzzFeed", "thekylecraig", "jballands", "Squareses", "HectorLuisJr",
+        "jaimemguajardo", "tfrank64", "normalnorman", "j_l_avery"],
     "pollingIntervalHours": 2,
-    "markovOrder": 1,
-    "scrubNewLines": true,
-    "suppressReplies": true,
-    "scrubMentions": false,
-    "scrubLinks": true
+    "tweetingIntervalHours": 5,
+    "markovOrder": 2,
+    "scrubbingStrategy": 2,
+    "newLines": true,
+    "replies": true,
+    "mentions": false,
+    "links": true
 }

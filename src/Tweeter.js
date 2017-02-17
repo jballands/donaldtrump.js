@@ -21,14 +21,14 @@ export default class Tweeter {
     }
 
     beginPolling() {
-        if (typeof options.pollingIntervalHours !== 'number') {
-            return console.error(`ERROR: No pollingIntervalHours in options.json. Please add it.`.red);
+        if (typeof options.tweetingIntervalHours !== 'number') {
+            return console.error(`ERROR: No tweetingIntervalHours in options.json. Please add it.`.red);
         }
 
         setInterval(() => {
             this.postTweet()
                 .catch(err => console.err(err));
-        }, options.pollingIntervalHours * 1000 * 60 * 60);
+        }, options.tweetingIntervalHours * 1000 * 60 * 60);
     }
 
     getTweet() {
@@ -109,10 +109,10 @@ export default class Tweeter {
     }
 
     _tweetHelper(tweet) {
-        tweet = this._scrubNewLines(tweet, options.scrubNewLines);
-        tweet = this._suppressReplies(tweet, options.suppressReplies);
-        tweet = this._scrubMentions(tweet, options.scrubMentions);
-        tweet = this._scrubLinks(tweet, options.scrubLinks);
+        tweet = this._scrubNewLines(tweet, options.newLines);
+        tweet = this._suppressReplies(tweet, options.replies);
+        tweet = this._scrubMentions(tweet, options.mentions);
+        tweet = this._scrubLinks(tweet, options.links);
         return tweet;
     }
 

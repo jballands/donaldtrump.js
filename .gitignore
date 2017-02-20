@@ -7,3 +7,6 @@ tmp/
 media/
 npm-debug.log
 raspberry_pi.txt
+mnt
+go.sh
+mongod.conf

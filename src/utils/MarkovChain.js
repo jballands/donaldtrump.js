@@ -8,6 +8,7 @@
 import _chunk from 'lodash.chunk';
 import _flatten from 'lodash.flatten';
 import _random from 'lodash.random';
+import sentenceTokenizer from './sentenceTokenizer';
 
 const TWEET_COMPLETION_THRESHOLD = 0.92;
 
@@ -25,35 +26,40 @@ export default class MarkovChain {
 
     seed(tweets, allowAsGenesis) {
         for (const tweet of tweets) {
-            const sentences = //TODO: Turn into sentence .map(s => s.split(' ').filter(w => w.length > 0));
-            const chunkedSentences = sentences.map(s => _chunk(s, this.order));
-            const chunks = _flatten(chunkedSentences);
+            // Split into sentences
+            const sentences = sentenceTokenizer(tweet);
+            const chunkedSentences = sentences.map(s => _chunk(s.split(' '), this.order));
 
-            for (let i = 0 ; i < chunks.length ; i++) {
-                const chunk = chunks[i];
+            // Append the flattened sentece structure to the chuncked sentences
+            // so that the algorithm has an opportunity to make a longer tweet
+            // if it wants to
+            chunkedSentences.push(_flatten(chunkedSentences));
 
-                // Is this the first chunk? If so, add it to starters
-                if (i === 0 && allowAsGenesis === true) {
-                    this.starters.push(chunk);
-                }
+            // For every sentence in the chunked sentences, seed the Markov chain
+            for (const chunked of chunkedSentences) {
+                for (let i = 0 ; i < chunked.length ; i++) {
+                    const chunk = chunked[i];
 
-                // If the word doesn't exist in the corpus yet, add it
-                if (!this.corpus[chunk]) {
-                    this.corpus[chunk] = [];
-                }
+                    // Is this the first chunk? If so, add it to starters
+                    if (i === 0 && allowAsGenesis === true) {
+                        this.starters.push(chunk);
+                    }
 
-                // If there's nothing to look ahead to, just put in null as a terminator
-                if (i === chunks.length - 1) {
-                    this.corpus[chunk].push(null);
-                }
-                else {
-                    this.corpus[chunk].push(chunks[i + 1]);
+                    // If the word doesn't exist in the corpus yet, add it
+                    if (!this.corpus[chunk]) {
+                        this.corpus[chunk] = [];
+                    }
+
+                    // If there's nothing to look ahead to, just put in null as a terminator
+                    if (i === chunked.length - 1) {
+                        this.corpus[chunk].push(null);
+                    }
+                    else {
+                        this.corpus[chunk].push(chunked[i + 1]);
+                    }
                 }
             }
         }
-
-        console.log(this.corpus);
-
     }
 
     generateRandomly(maxChar) {
@@ -74,6 +80,7 @@ export default class MarkovChain {
 
         // While the chunk doesn't terminate, keep adding to the tweet
         while (lastChunk != null) {
+
             // The current tweet builder length
             const tweetBuilderLength = this.stringArrayLength(tweetBuilder);
 
@@ -114,9 +121,11 @@ export default class MarkovChain {
             tweetBuilder = tweetBuilder.concat(lastChunk);
             console.info(`${tweetBuilder.join(' -> '.red)} ${'-> ?'.yellow}`);
             console.info(`New seed: ${lastChunk !== null ? lastChunk.join(' ') : 'null'}`.magenta);
+
+            debugger;
         }
 
-        console.info(`${tweetBuilder.join(' -> '.red)}`);
+        //console.info(`${tweetBuilder.join(' -> '.red)}`);
 
         return tweetBuilder.join(' ');
     }

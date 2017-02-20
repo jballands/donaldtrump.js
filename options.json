@@ -1,6 +1,6 @@
 {
     "accounts": ["realDonaldTrump", "VP", "oreillyfactor", "RichardBSpencer", "POTUS44",
-        "BuzzFeed", "thekylecraig", "jballands", "Squareses", "HectorLuisJr",
+        "BuzzFeedPol", "thekylecraig", "jballands", "Squareses", "HectorLuisJr",
         "jaimemguajardo", "tfrank64", "normalnorman", "j_l_avery"],
     "pollingIntervalHours": 2,
     "tweetingIntervalHours": 5,

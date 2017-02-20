@@ -7,6 +7,8 @@
 
 import Mongoose from 'mongoose';
 
+Mongoose.Promise = global.Promise;
+
 // -----------------------------------------------------------------------------
 
 export default Mongoose.model('User', new Mongoose.Schema({

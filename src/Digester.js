@@ -12,6 +12,8 @@ import Tweet from './models/Tweet';
 import env from './utils/env';
 import options from './utils/options';
 
+Mongoose.Promise = global.Promise;
+
 // -----------------------------------------------------------------------------
 
 export default class Digester {
@@ -32,7 +34,6 @@ export default class Digester {
                 dbUri = 'mongodb://localhost/donaldtrump-js';
             }
 
-            Mongoose.Promise = global.Promise;
             Mongoose.connect(dbUri);
 
             Mongoose.connection.on('open', () => {

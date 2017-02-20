@@ -112,7 +112,7 @@ export default class Tweeter {
         tweet = this._newLines(tweet, options.newLines);
         tweet = this._replies(tweet, options.replies);
         tweet = this._mentions(tweet, options.mentions);
-        tweet = this._links(tweet, options.links);
+        // tweet = this._links(tweet, options.links);
         return tweet;
     }
 
@@ -137,11 +137,11 @@ export default class Tweeter {
         return tweet.replace(/(\s@|^.@|^@)/g, ' ');
     }
 
-    _links(tweet, mode) {
+    /*_links(tweet, mode) {
         if (mode === true) {
             return tweet;
         }
         return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
-    }
+    }*/
 
 }

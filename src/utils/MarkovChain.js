@@ -38,7 +38,11 @@ export default class MarkovChain {
             // For every sentence in the chunked sentences, seed the Markov chain
             for (const chunked of chunkedSentences) {
                 for (let i = 0 ; i < chunked.length ; i++) {
+
+                    // Use a corpus ref so that the corpus keys don't care about
+                    // capitalization
                     const chunk = chunked[i];
+                    const corpusRef = chunk.map(p => p.toLowerCase());
 
                     // Is this the first chunk? If so, add it to starters
                     if (i === 0 && allowAsGenesis === true) {
@@ -46,16 +50,16 @@ export default class MarkovChain {
                     }
 
                     // If the word doesn't exist in the corpus yet, add it
-                    if (!this.corpus[chunk]) {
-                        this.corpus[chunk] = [];
+                    if (!this.corpus[corpusRef]) {
+                        this.corpus[corpusRef] = [];
                     }
 
                     // If there's nothing to look ahead to, just put in null as a terminator
                     if (i === chunked.length - 1) {
-                        this.corpus[chunk].push(null);
+                        this.corpus[corpusRef].push(null);
                     }
                     else {
-                        this.corpus[chunk].push(chunked[i + 1]);
+                        this.corpus[corpusRef].push(chunked[i + 1]);
                     }
                 }
             }
@@ -86,7 +90,10 @@ export default class MarkovChain {
             const tweetCompletion = tweetBuilderLength / maxChar;
 
             // From the possibleNextChunks, choose a random chunk
-            const possibleNextChunks = this.corpus[lastChunk];
+            // We create a corpus ref since the corpus keys are agnostic to
+            // capitalization
+            const corpusRef = lastChunk.map(p => p.toLowerCase());
+            const possibleNextChunks = this.corpus[corpusRef];
 
             // If there's nothing in the corpus, terminate early
             if (!possibleNextChunks) {

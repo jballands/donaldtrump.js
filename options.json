@@ -1,5 +1,5 @@
 {
-    "accounts": ["realDonaldTrump", "VP", "oreillyfactor", "POTUS44", "BuzzFeedPol",
+    "accounts": ["realDonaldTrump", "VP", "oreillyfactor", "BuzzFeedPol",
         "thekylecraig", "jballands", "Squareses", "HectorLuisJr", "jaimemguajardo",
         "tfrank64", "j_l_avery", "SylviePelleti11"],
     "pollingIntervalHours": 2,
@@ -8,5 +8,6 @@
     "newLines": false,
     "replies": false,
     "mentions": true,
-    "links": true
+    "links": true,
+    "retweets": false
 }

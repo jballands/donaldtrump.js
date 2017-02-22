@@ -114,6 +114,7 @@ export default class Tweeter {
         tweet = this._replies(tweet, options.replies);
         tweet = this._mentions(tweet, options.mentions);
         tweet = this._links(tweet, options.links);
+        tweet = this._retweets(tweet, options.retweets);
         tweet = _unescape(tweet);
 
         return tweet;
@@ -145,6 +146,13 @@ export default class Tweeter {
             return tweet;
         }
         return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+    }
+
+    _retweets(tweet, mode) {
+        if (mode === true) {
+            return tweet;
+        }
+        return tweet.replace(/RT\s@[a-zA-Z0-9]+:(\s)*/g, '');
     }
 
 }

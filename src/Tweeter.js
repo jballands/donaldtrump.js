@@ -110,49 +110,54 @@ export default class Tweeter {
     }
 
     _tweetHelper(tweet) {
-        tweet = this._newLines(tweet, options.newLines);
-        tweet = this._replies(tweet, options.replies);
-        tweet = this._mentions(tweet, options.mentions);
-        tweet = this._links(tweet, options.links);
-        tweet = this._retweets(tweet, options.retweets);
+        tweet = this._newLines(tweet, options.suppressNewLines);
+        tweet = this._retweets(tweet, options.suppressRetweets);
+        tweet = this._replies(tweet, options.suppressReplies);
+        tweet = this._mentions(tweet, options.suppressMentions);
+        tweet = this._links(tweet, options.suppressLinks);
         tweet = _unescape(tweet);
 
         return tweet;
     }
 
     _replies(tweet, mode) {
-        if (mode === true) {
+        if (mode === 0) {
             return tweet;
         }
-        return tweet.replace(/^@/g, '.@');
+        if (mode === 1) {
+            return tweet.replace(/^@/g, '.@');
+        }
+        return tweet.replace(/^((@[a-zA-Z0-9_]+\s)+)/g, '');
     }
 
     _newLines(tweet, mode) {
-        if (mode === true) {
+        if (mode === 0) {
             return tweet;
         }
         return tweet.replace(/\n/g, ' ');
     }
 
     _mentions(tweet, mode) {
-        if (mode === true) {
+        if (mode === 0) {
             return tweet;
         }
         return tweet.replace(/(\s@|^.@|^@)/g, ' ');
     }
 
     _links(tweet, mode) {
-        if (mode === true) {
+        if (mode === 0) {
             return tweet;
         }
         return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
     }
 
     _retweets(tweet, mode) {
-        if (mode === true) {
+        if (mode === 0) {
             return tweet;
         }
-        return tweet.replace(/RT\s@[a-zA-Z0-9]+:(\s)*/g, '');
+        return tweet.replace(/RT\s@[a-zA-Z0-9_]+:(\s)*/g, '');
     }
+
+
 
 }

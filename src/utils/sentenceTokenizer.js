@@ -5,7 +5,8 @@
 //  (C) 2017 Jonathan Ballands
 //
 
-const tokenizerBlacklist = ['mr.', 'mrs.', 'ms.', 'sen.', 'vs.'];
+const tokenizerBlacklist = ['mr.', 'mrs.', 'ms.', 'sen.', 'vs.', 'assoc.', 'avg.',
+    'incl.', 'pres.', 'u.s.'];
 
 export default function(text) {
     // To tokenize into sentences, it's sometimes easier to look at each word

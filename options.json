@@ -5,9 +5,9 @@
     "pollingIntervalHours": 2,
     "tweetingIntervalHours": 5,
     "markovOrder": 2,
-    "newLines": false,
-    "replies": false,
-    "mentions": true,
-    "links": true,
-    "retweets": false
+    "suppressNewLines": 1,
+    "suppressReplies": 2,
+    "suppressMentions": 0,
+    "suppressLinks": 1,
+    "suppressRetweets": 1
 }

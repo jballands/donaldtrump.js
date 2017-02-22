@@ -1,37 +1,37 @@
 {
-    "name": "donaldtrump-js",
-    "version": "1.0.0",
-    "description": "A Markov chain bot that pulls from Trump's Twitter as well as other sources",
-    "scripts": {
-        "start": "node_modules/.bin/gulp build && node dist/index.js",
-        "dev": "node_modules/.bin/gulp",
-        "build": "node_modules/.bin/gulp build",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "bin": {
-        "trump": "dist/index.js"
-    },
-    "repository": "https://github.com/jballands/donaldtrump.js",
-    "author": "Jonathan Ballands <jballands@gmail.com>",
-    "license": "GPL-3",
-    "dependencies": {
-        "colors": "^1.1.2",
-        "lodash.assign": "^4.2.0",
-        "lodash.chunk": "^4.2.0",
-        "lodash.flatten": "^4.4.0",
-        "lodash.random": "^3.2.0",
-        "lodash.unescape": "^4.0.1",
-        "mongoose": "^4.7.6",
-        "query-string": "^4.3.1",
-        "request": "^2.79.0"
-    },
-    "devDependencies": {
-        "babel-preset-es2015": "^6.18.0",
-        "babel-preset-stage-0": "^6.16.0",
-        "gulp": "^3.9.1",
-        "gulp-babel": "^6.1.2",
-        "gulp-rimraf": "^0.2.1",
-        "gulp-util": "^3.0.8",
-        "run-sequence": "^1.2.2"
-    }
+  "name": "donaldtrump-js",
+  "version": "1.0.1",
+  "description": "A Markov chain bot that pulls from Trump's Twitter as well as other sources",
+  "scripts": {
+    "start": "node_modules/.bin/gulp build && node dist/index.js",
+    "dev": "node_modules/.bin/gulp",
+    "build": "node_modules/.bin/gulp build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "trump": "dist/index.js"
+  },
+  "repository": "https://github.com/jballands/donaldtrump.js",
+  "author": "Jonathan Ballands <jballands@gmail.com>",
+  "license": "GPL-3",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "lodash.assign": "^4.2.0",
+    "lodash.chunk": "^4.2.0",
+    "lodash.flatten": "^4.4.0",
+    "lodash.random": "^3.2.0",
+    "lodash.unescape": "^4.0.1",
+    "mongoose": "^4.7.6",
+    "query-string": "^4.3.1",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-rimraf": "^0.2.1",
+    "gulp-util": "^3.0.8",
+    "run-sequence": "^1.2.2"
+  }
 }

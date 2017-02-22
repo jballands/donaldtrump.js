@@ -7,8 +7,10 @@
 
 import request from 'request';
 import colors from 'colors';
+import _unescape from 'lodash.unescape';
 import Tweet from './models/Tweet';
 import MarkovChain from './utils/MarkovChain';
+import tweetCompressor from './utils/tweetCompressor';
 import options from './utils/options';
 import env from './utils/env';
 
@@ -112,7 +114,9 @@ export default class Tweeter {
         tweet = this._newLines(tweet, options.newLines);
         tweet = this._replies(tweet, options.replies);
         tweet = this._mentions(tweet, options.mentions);
-        // tweet = this._links(tweet, options.links);
+        tweet = this._links(tweet, options.links);
+        tweet = _unescape(tweet);
+
         return tweet;
     }
 
@@ -137,11 +141,11 @@ export default class Tweeter {
         return tweet.replace(/(\s@|^.@|^@)/g, ' ');
     }
 
-    /*_links(tweet, mode) {
+    _links(tweet, mode) {
         if (mode === true) {
             return tweet;
         }
         return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
-    }*/
+    }
 
 }

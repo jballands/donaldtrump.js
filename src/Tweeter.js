@@ -10,7 +10,6 @@ import colors from 'colors';
 import _unescape from 'lodash.unescape';
 import Tweet from './models/Tweet';
 import MarkovChain from './utils/MarkovChain';
-import tweetCompressor from './utils/tweetCompressor';
 import options from './utils/options';
 import env from './utils/env';
 

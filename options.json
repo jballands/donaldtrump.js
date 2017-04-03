@@ -1,10 +1,8 @@
 {
-    "accounts": ["realDonaldTrump", "VP", "oreillyfactor", "BuzzFeedPol",
-        "thekylecraig", "jballands", "Squareses", "HectorLuisJr", "jaimemguajardo",
-        "tfrank64", "j_l_avery", "SylviePelleti11"],
+    "accounts": ["realDonaldTrump", "thekylecraig", "jballands", "SylviePelleti11"],
     "pollingIntervalHours": 2,
     "tweetingIntervalHours": 5,
-    "markovOrder": 2,
+    "markovOrder": 1,
     "suppressNewLines": 1,
     "suppressReplies": 2,
     "suppressMentions": 0,
